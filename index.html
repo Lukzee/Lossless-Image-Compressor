@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="JavaScript image compressor.">
+  <meta name="author" content="Chen Fengyuan">
+  <title>Compressor.js</title>
+  <link rel="stylesheet" href="bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <br><br>
+    <div class="mb-4">
+      <div>
+        <label for="input" style="cursor: pointer;">upload file... <input type="file" id="input" accept="image/*" style="display: none;"></label>
+      </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5 class="card-header d-flex align-items-center justify-content-between">
+                <span>Input image <small class="text-secondary">(original image)</small></span>
+
+                <a class="btn btn-sm btn-blocks btn-outline-primary" download="" href="" title="Download the original image" id="oImgLink">Download</a>
+            </h5>
+
+            <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4 d-flex mb-3">
+                    <div class="w-100 text-center">
+                      <img class="mw-100" src="" alt="" id="orImg">
+                    </div>
+                  </div>
+
+                  <div class="col-md-8">
+                    <dl class="row">
+                      <dt class="col-5">lastModified:</dt>
+                      <dd class="col-7" id="olastModified"></dd>
+
+                      <dt class="col-5">lastModifiedDate:</dt>
+                      <dd class="col-7" id="olastModifiedDate"></dd>
+
+                      <dt class="col-5">name:</dt>
+                      <dd class="col-7" id="oname"></dd>
+
+                      <dt class="col-5">type:</dt>
+                      <dd class="col-7" id="otype"></dd>
+
+                      <dt class="col-5">size:</dt>
+                      <dd class="col-7" id="osize"></dd>
+                    </dl>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h5 class="card-header d-flex align-items-center justify-content-between">
+                <span>Output image <small class="text-secondary">(compressed image)</small></span>
+
+                <a class="btn btn-sm btn-blocks btn-outline-primary" download="" href="" title="Download the compressed image" id="nImgLink">Download</a>
+            </h5>
+
+            <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4 d-flex mb-3">
+                    <div class="w-100 text-center">
+                      <img class="mw-100" src="" alt="" id="outImg">
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <dl class="row">
+                      <dt class="col-5">lastModified:</dt>
+                      <dd class="col-7" id="nlastModified"></dd>
+
+                      <dt class="col-5">lastModifiedDate:</dt>
+                      <dd class="col-7" id="nlastModifiedDate"></dd>
+
+                      <dt class="col-5">name:</dt>
+                      <dd class="col-7" id="nname"></dd>
+
+                      <dt class="col-5">type:</dt>
+                      <dd class="col-7" id="ntype"></dd>
+
+                      <dt class="col-5">size:</dt>
+                      <dd class="col-7" id="nsize">
+                        <span></span>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+  </div>
+
+  <script src="jquery.js"></script>
+  <script src="bootstrap.min.js"></script>
+
+  <script src="js/compressor.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var inputURL = '';
+        var outputURL = '';
+        var input = {};
+        var output = {};
+        var inputElement = document.querySelector('#input');
+        
+        var orImg = document.getElementById('orImg');
+        var olastModified = document.getElementById('olastModified');
+        var olastModifiedDate = document.getElementById('olastModifiedDate');
+        var oname = document.getElementById('oname');
+        var otype = document.getElementById('otype');
+        var osize = document.getElementById('osize');
+        var oImgLink = document.getElementById('oImgLink');
+        
+        var outImg = document.getElementById('outImg');
+        var nlastModified = document.getElementById('nlastModified');
+        var nlastModifiedDate = document.getElementById('nlastModifiedDate');
+        var nname = document.getElementById('nname');
+        var ntype = document.getElementById('ntype');
+        var nsize = document.getElementById('nsize');
+        var nImgLink = document.getElementById('nImgLink');
+
+        var options = {
+            strict: true,
+            checkOrientation: true,
+            retainExif: false,
+            maxWidth: 1024,
+            maxHeight: 1024,
+            minWidth: 0,
+            minHeight: 0,
+            width: undefined,
+            height: undefined,
+            resize: 'none',
+            quality: 0.8,
+            mimeType: '',
+            convertTypes: 'image/png',
+            convertSize: 1000000,
+            success: function (result) {
+                console.log('Output: ', result);
+                outputURL = URL.createObjectURL(result);
+                output = result;
+                input.value = '';
+                
+                outImg.src = outputURL;
+                nlastModified.innerHTML = output.lastModified;
+                nlastModifiedDate.innerHTML = output.lastModifiedDate;
+                nname.innerHTML = output.name;
+                ntype.innerHTML = output.type;
+                nsize.innerHTML = prettySize(output.size);
+                nImgLink.href = outputURL;
+                nImgLink.download = output.name;
+            },
+            error: function (err) {
+                window.alert(err.message);
+            },
+        };
+
+        inputElement.addEventListener('change', function (e) {
+            compress(e.target.files ? e.target.files[0] : null);
+        });
+
+        function prettySize (size) {
+          var kilobyte = 1024;
+          var megabyte = kilobyte * kilobyte;
+
+          if (size > megabyte) {
+            return (size / megabyte).toFixed(2) + ' MB';
+          } else if (size > kilobyte) {
+            return (size / kilobyte).toFixed(2) + ' KB';
+          } else if (size >= 0) {
+            return size + ' B';
+          }
+
+          return 'N/A';
+        }
+
+        function compress(file) {
+            if (!file) {
+            return;
+            }
+
+            console.log('Input: ', file);
+            inputURL = URL.createObjectURL(file);
+            input = file;
+            new Compressor(file, options);
+            
+            orImg.src = inputURL;
+            olastModified.innerHTML = input.lastModified;
+            olastModifiedDate.innerHTML = input.lastModifiedDate;
+            oname.innerHTML = input.name;
+            otype.innerHTML = input.type;
+            osize.innerHTML = prettySize(input.size);
+            oImgLink.href = inputURL;
+            oImgLink.download = input.name;
+        }
+
+        if (window.XMLHttpRequest) {
+            var xhr = new XMLHttpRequest();
+
+            xhr.onload = function () {
+                var blob = xhr.response;
+                var date = new Date();
+
+                blob.lastModified = date.getTime();
+                blob.lastModifiedDate = date;
+                blob.name = 'picture.jpg';
+                compress(blob);
+            };
+            xhr.open('GET', 'images/picture.jpg');
+            xhr.responseType = 'blob';
+            xhr.send();
+        }
+    });
+  </script>
+</body>
+</html>
