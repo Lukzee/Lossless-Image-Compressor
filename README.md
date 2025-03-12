@@ -2,7 +2,7 @@
 *A lightweight, dependency-free image compression tool*  
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://lukzee.github.io/Lossless-Image-Compressor/)  
-[![GitHub License](https://img.shields.io/github/license/Lukzee/Lossless-Image-Compressor)](LICENSE)  
+[![GitHub License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)  
 [![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen)](#contributing)  
 
 ## **🚀 About**  
