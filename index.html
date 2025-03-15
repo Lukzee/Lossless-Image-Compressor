@@ -15,8 +15,6 @@
       background-color: #f8f9fa;
       text-align: center;
       padding: 1rem 0;
-      position: absolute;
-      bottom: 0;
       width: 100%;
     }
   
@@ -31,6 +29,14 @@
 
     .footer i {
       margin-right: 0.5rem;
+    }
+
+    /* Media query for desktop view */
+    @media (min-width: 768px) {
+      .footer {
+        position: absolute;
+        bottom: 0;
+      }
     }
   </style>
 </head>
